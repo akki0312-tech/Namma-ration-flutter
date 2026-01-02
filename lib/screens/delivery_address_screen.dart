@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../constants/colors.dart';
 import '../constants/text_styles.dart';
 import 'delivery_pre_order_screen.dart';
@@ -21,8 +25,9 @@ class DeliveryAddressScreen extends StatefulWidget {
 
 class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
   final TextEditingController _instructionsController = TextEditingController();
+  bool _isLoadingLocation = false;
 
-  final Map<String, String> _deliveryAddress = {
+  Map<String, String> _deliveryAddress = {
     'line1': '24, Lakshmi Street',
     'line2': 'Anna Nagar West Extension',
     'city': 'Chennai',
@@ -32,9 +37,157 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _promptForLocation();
+  }
+
+  @override
   void dispose() {
     _instructionsController.dispose();
     super.dispose();
+  }
+
+  Future<void> _promptForLocation() async {
+    // Small delay to let UI build
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+
+    // Show dialog asking user if they want to use current location
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Use Current Location?'),
+        content: const Text(
+          'Do you want to deliver to your current location?\n\nஉங்கள் தற்போதைய இருப்பிடத்திற்கு டெலிவரி செய்ய விரும்புகிறீர்களா?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No / இல்லை'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _detectLocation();
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen),
+            child:
+                const Text('Yes / ஆம்', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _detectLocation() async {
+    setState(() => _isLoadingLocation = true);
+    debugPrint('LOCATION: Starting _detectLocation');
+    try {
+      // 1. Check Service
+      debugPrint('LOCATION: Checking service status...');
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      debugPrint('LOCATION: Service enabled: $serviceEnabled');
+      if (!serviceEnabled) {
+        throw 'Location services are disabled.';
+      }
+
+      // 2. Check Permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw 'Location permissions are denied.';
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw 'Location permissions are permanently denied.';
+      }
+
+      // 3. Get Position
+      // Using timeLimit to avoid infinite loading
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+
+      // 4. Reverse Geocoding (Direct API for Web reliability)
+      // Using the same API Key logic as MapLocatorScreen
+      const apiKey = 'AIzaSyBElGwzZ4vmeqxF57lcn9k7RX2ey6MGk-4';
+      final url =
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$apiKey';
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK') {
+          final results = data['results'] as List;
+          if (results.isNotEmpty) {
+            final result = results.first;
+            final components = result['address_components'] as List;
+
+            // Extract address parts
+            String street = '';
+            String subLocality = '';
+            String locality = '';
+            String city = '';
+            String pincode = '';
+
+            for (var c in components) {
+              final types = c['types'] as List;
+              if (types.contains('route'))
+                street = c['long_name'];
+              else if (types.contains('sublocality'))
+                subLocality = c['long_name'];
+              else if (types.contains('locality'))
+                locality = c['long_name'];
+              else if (types.contains('administrative_area_level_2'))
+                city = c['long_name'];
+              else if (types.contains('postal_code')) pincode = c['long_name'];
+            }
+
+            // Fallbacks
+            if (street.isEmpty) street = subLocality;
+            if (city.isEmpty) city = locality;
+
+            setState(() {
+              _deliveryAddress = {
+                'line1': '$street, $subLocality',
+                'line2': locality,
+                'city': city,
+                'pincode': pincode,
+                'landmark': 'Detected Location',
+                'phone': widget.userCard['phone'] ?? '+91 98765 43210',
+              };
+            });
+
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Location updated successfully!')),
+              );
+            }
+          }
+        } else {
+          throw 'Geocoding API Error: ${data['status']}';
+        }
+      } else {
+        throw 'Network error: ${response.statusCode}';
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to detect location: $e')),
+        );
+      }
+    } finally {
+      setState(() => _isLoadingLocation = false);
+    }
   }
 
   @override
@@ -94,6 +247,13 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
+                      if (_isLoadingLocation)
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: LinearProgressIndicator(
+                              color: AppColors.primaryGreen),
+                        ),
+
                       // Info Box
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -150,17 +310,28 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  size: 20,
-                                  color: Color(0xFF2D5F4F),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 20,
+                                      color: Color(0xFF2D5F4F),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Delivery Address',
+                                      style: AppTextStyles.bodyBoldEn
+                                          .copyWith(fontSize: 14),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Registered Address / பதிவு செய்யப்பட்ட முகவரி',
-                                  style: AppTextStyles.bodyBoldEn
-                                      .copyWith(fontSize: 14),
+                                IconButton(
+                                  onPressed: _detectLocation,
+                                  icon: const Icon(Icons.my_location,
+                                      color: AppColors.primaryGreen),
+                                  tooltip: 'Use Current Location',
                                 ),
                               ],
                             ),
@@ -223,7 +394,12 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                               width: double.infinity,
                               child: OutlinedButton(
                                 onPressed: () {
-                                  // Edit address functionality
+                                  // Edit address functionality (using text fields in a real app)
+                                  // For now, we can prompt for manual entry or just keep as mock editing
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Edit feature to be implemented')));
                                 },
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF6366F1),
@@ -245,53 +421,6 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Map Preview
-                      Container(
-                        height: 180,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFFE8F4F0), Color(0xFFD4EDE4)],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.location_on,
-                                size: 32,
-                                color: Color(0xFF2D5F4F),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Anna Nagar West Extension',
-                                style: AppTextStyles.bodyBoldEn.copyWith(
-                                  color: const Color(0xFF2D5F4F),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  '0.8 km from Shop #402',
-                                  style: AppTextStyles.bodyEn
-                                      .copyWith(fontSize: 12),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -320,16 +449,6 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
                                     color: Color(0xFFE0E0E0), width: 2),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0), width: 2),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                    color: Color(0xFF6366F1), width: 2),
                               ),
                               contentPadding: const EdgeInsets.all(12),
                             ),
