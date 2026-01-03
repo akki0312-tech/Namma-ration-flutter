@@ -200,56 +200,11 @@ class _DeliveryConfirmationScreenState
                       const SizedBox(height: 20),
 
                       // Action Buttons
-<<<<<<< HEAD
-                      // Action Buttons
                       Column(
                         children: [
+                          // Track Delivery Button
                           SizedBox(
                             width: double.infinity,
-=======
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeDashboardScreen(
-                                        language: widget.language),
-                                  ),
-                                  (route) => false,
-                                );
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: const Color(0xFF2D5F4F),
-                                side: const BorderSide(
-                                    color: Color(0xFF2D5F4F), width: 2),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Back to Home',
-                                    style: AppTextStyles.buttonEn.copyWith(
-                                        color: const Color(0xFF2D5F4F)),
-                                  ),
-                                  Text(
-                                    'முகப்புக்குத் திரும்பு',
-                                    style: AppTextStyles.buttonTa.copyWith(
-                                        color: const Color(0xFF2D5F4F)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -293,8 +248,9 @@ class _DeliveryConfirmationScreenState
                               ),
                             ),
                           ),
-<<<<<<< HEAD
                           const SizedBox(height: 16),
+                          
+                          // Back to Home Button
                           SizedBox(
                             width: double.infinity,
                             child: OutlinedButton(
@@ -334,8 +290,6 @@ class _DeliveryConfirmationScreenState
                               ),
                             ),
                           ),
-=======
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                         ],
                       ),
                     ],

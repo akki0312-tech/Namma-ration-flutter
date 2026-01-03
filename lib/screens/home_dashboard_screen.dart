@@ -256,11 +256,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-<<<<<<< HEAD
                           childAspectRatio: 0.85, // Increased from 0.72 to fit content better
-=======
-                          childAspectRatio: 0.72,
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                         ),
                         itemCount: _inventoryItems.length,
                         itemBuilder: (context, index) {
@@ -362,11 +358,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final statusColor = _getStatusColor(item['status']);
 
     return Container(
-<<<<<<< HEAD
       padding: const EdgeInsets.all(12), // Reduced padding from 20 to 12
-=======
-      padding: const EdgeInsets.all(20),
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -387,7 +379,6 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         children: [
           Icon(
             item['icon'],
-<<<<<<< HEAD
             size: 40, // Slightly improved size balance
             color: AppColors.primaryGreen,
           ),
@@ -398,31 +389,16 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             textAlign: TextAlign.center,
             maxLines: 1, 
             overflow: TextOverflow.ellipsis,
-=======
-            size: 48,
-            color: AppColors.primaryGreen,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            item['name'],
-            style: AppTextStyles.bodyBoldEn.copyWith(fontSize: 18),
-            textAlign: TextAlign.center,
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
           ),
           const SizedBox(height: 2),
           Text(
             item['tamilName'],
             style: AppTextStyles.bodyTa,
             textAlign: TextAlign.center,
-<<<<<<< HEAD
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 6),
-=======
-          ),
-          const SizedBox(height: 8),
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
           Text(
             item['quantity'],
             style: AppTextStyles.bodyEn.copyWith(
@@ -432,11 +408,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           ),
           const SizedBox(height: 8),
           Container(
-<<<<<<< HEAD
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-=======
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.15),
               border: Border.all(color: statusColor, width: 1.5),
@@ -449,32 +421,21 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   style: AppTextStyles.captionEn.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w600,
-<<<<<<< HEAD
                     fontSize: 11, // Slightly smaller font to fit
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-=======
-                  ),
-                  textAlign: TextAlign.center,
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                 ),
                 Text(
                   item['statusTamil'],
                   style: AppTextStyles.captionTa.copyWith(
                     color: statusColor,
-<<<<<<< HEAD
                     fontSize: 10, // Slightly smaller font
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-=======
-                    fontSize: 12,
-                  ),
-                  textAlign: TextAlign.center,
->>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                 ),
               ],
             ),
