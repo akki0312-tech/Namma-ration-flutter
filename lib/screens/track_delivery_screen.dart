@@ -135,7 +135,10 @@ class _TrackDeliveryScreenState extends State<TrackDeliveryScreen>
                       // Tracking Map
                       Container(
                         height: 240,
+<<<<<<< HEAD
                         width: double.infinity, // Ensure full width
+=======
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             begin: Alignment.topLeft,

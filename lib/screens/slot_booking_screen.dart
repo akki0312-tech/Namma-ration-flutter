@@ -13,6 +13,7 @@ class SlotBookingScreen extends StatefulWidget {
 }
 
 class _SlotBookingScreenState extends State<SlotBookingScreen> {
+<<<<<<< HEAD
   late String selectedDate;
   int? selectedSlot;
   late final List<Map<String, String>> dates;
@@ -83,6 +84,17 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
     ];
     return days[weekday - 1];
   }
+=======
+  String selectedDate = 'today';
+  int? selectedSlot;
+
+  final List<Map<String, String>> dates = [
+    {'id': 'today', 'label': 'Today', 'tamilLabel': 'இன்று', 'date': 'Dec 23'},
+    {'id': 'tomorrow', 'label': 'Tomorrow', 'tamilLabel': 'நாளை', 'date': 'Dec 24'},
+    {'id': 'day3', 'label': 'Wed', 'tamilLabel': 'புதன்', 'date': 'Dec 25'},
+    {'id': 'day4', 'label': 'Thu', 'tamilLabel': 'வியாழன்', 'date': 'Dec 26'},
+  ];
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
 
   final List<Map<String, dynamic>> slots = [
     {'id': 1, 'time': '08:00 AM - 09:00 AM', 'status': 'vacant', 'slotsLeft': 12},
@@ -202,7 +214,11 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                       const SizedBox(height: 16),
                       
                       SizedBox(
+<<<<<<< HEAD
                         height: 120, // Increased height from 100 to 120 to prevent overflow
+=======
+                        height: 100,
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: dates.length,
@@ -219,8 +235,13 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                                   });
                                 },
                                 child: Container(
+<<<<<<< HEAD
                                   width: 120, // Increased from 115 to 120
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), // Reduced padding
+=======
+                                  width: 100,
+                                  padding: const EdgeInsets.all(16),
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                   decoration: BoxDecoration(
                                     color: isSelected ? AppColors.primaryGreen : Colors.white,
                                     border: Border.all(
@@ -252,7 +273,10 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                                         style: AppTextStyles.bodyBoldEn.copyWith(
                                           color: isSelected ? Colors.white : AppColors.textPrimary,
                                         ),
+<<<<<<< HEAD
                                         overflow: TextOverflow.ellipsis,
+=======
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
@@ -357,6 +381,7 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Padding(
+<<<<<<< HEAD
                                             padding: const EdgeInsets.only(left: 34),
                                             child: Row(
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,6 +420,38 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                                                       ),
                                                     ],
                                                   ),
+=======
+                                            padding: const EdgeInsets.only(left: 36),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 10,
+                                                  height: 10,
+                                                  decoration: BoxDecoration(
+                                                    color: _getStatusColor(slot['status']),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      statusInfo['en']!,
+                                                      style: AppTextStyles.bodyBoldEn.copyWith(
+                                                        color: isSelected ? Colors.white : AppColors.textPrimary,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      statusInfo['ta']!,
+                                                      style: AppTextStyles.bodyTa.copyWith(
+                                                        color: isSelected ? Colors.white.withOpacity(0.9) : AppColors.textPrimary,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                                 ),
                                               ],
                                             ),
@@ -442,6 +499,7 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
         child: ElevatedButton(
           onPressed: selectedSlot != null
               ? () {
+<<<<<<< HEAD
                   final dateItem = dates.firstWhere((d) => d['id'] == selectedDate);
                   final slotItem = slots.firstWhere((s) => s['id'] == selectedSlot);
                   
@@ -456,6 +514,12 @@ class _SlotBookingScreenState extends State<SlotBookingScreen> {
                         bookingDate: formattedDate,
                         bookingTime: slotItem['time'],
                       ),
+=======
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DigitalTokenScreen(language: widget.language),
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                     ),
                   );
                 }

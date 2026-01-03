@@ -5,6 +5,7 @@ import '../constants/text_styles.dart';
 
 class DigitalTokenScreen extends StatelessWidget {
   final String language;
+<<<<<<< HEAD
   final String bookingDate;
   final String bookingTime;
 
@@ -14,6 +15,10 @@ class DigitalTokenScreen extends StatelessWidget {
     required this.bookingDate,
     required this.bookingTime,
   });
+=======
+
+  const DigitalTokenScreen({super.key, required this.language});
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
 
   @override
   Widget build(BuildContext context) {
@@ -142,14 +147,22 @@ class DigitalTokenScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
+<<<<<<< HEAD
                                     bookingTime,
+=======
+                                    '10:00 AM - 11:00 AM',
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                     style: AppTextStyles.heading2En.copyWith(
                                       color: Colors.white,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
+<<<<<<< HEAD
                                     bookingDate,
+=======
+                                    'Today, Dec 23, 2025',
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                     style: AppTextStyles.bodyEn.copyWith(
                                       color: Colors.white.withOpacity(0.9),
                                     ),
@@ -198,7 +211,11 @@ class DigitalTokenScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: QrImageView(
+<<<<<<< HEAD
                                 data: 'NAMMA_RATION_TOKEN_A142_$bookingDate',
+=======
+                                data: 'NAMMA_RATION_TOKEN_A142_20251223_1000',
+>>>>>>> 032298d6177e98687fd927b227bdc5be846a3a2b
                                 version: QrVersions.auto,
                                 size: 240,
                                 backgroundColor: Colors.white,
